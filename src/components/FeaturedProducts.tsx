@@ -1,7 +1,9 @@
 import React from 'react'
 import { Star, Heart, ShoppingCart } from 'lucide-react'
+import { useApp } from '../context/AppContext'
+import { Product } from '../types'
 
-const products = [
+const products: Product[] = [
   {
     id: 1,
     name: "Premium Wireless Headphones",
@@ -45,6 +47,25 @@ const products = [
 ]
 
 const FeaturedProducts = () => {
+  const { state, dispatch } = useApp()
+
+  const handleAddToCart = (product: Product) => {
+    dispatch({ type: 'ADD_TO_CART', payload: product })
+  }
+
+  const handleToggleWishlist = (product: Product) => {
+    const isInWishlist = state.wishlist.some(item => item.id === product.id)
+    if (isInWishlist) {
+      dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: product.id })
+    } else {
+      dispatch({ type: 'ADD_TO_WISHLIST', payload: product })
+    }
+  }
+
+  const isInWishlist = (productId: number) => {
+    return state.wishlist.some(item => item.id === productId)
+  }
+
   return (
     <section id="products" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,12 +105,22 @@ const FeaturedProducts = () => {
                 </div>
 
                 {/* Wishlist Button */}
-                <button className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-50">
-                  <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors" />
+                <button 
+                  onClick={() => handleToggleWishlist(product)}
+                  className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-50"
+                >
+                  <Heart className={`w-5 h-5 transition-colors ${
+                    isInWishlist(product.id) 
+                      ? 'text-red-500 fill-current' 
+                      : 'text-gray-600 hover:text-red-500'
+                  }`} />
                 </button>
 
                 {/* Quick Add Button */}
-                <button className="absolute bottom-4 left-1/2 transform -translate-x-1/2 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-indigo-700">
+                <button 
+                  onClick={() => handleAddToCart(product)}
+                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-indigo-700"
+                >
                   <ShoppingCart className="w-4 h-4" />
                   <span className="text-sm font-medium">Quick Add</span>
                 </button>

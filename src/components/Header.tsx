@@ -1,27 +1,32 @@
 import React, { useState } from 'react'
 import { Menu, X, ShoppingCart, User, Search } from 'lucide-react'
+import { useApp } from '../context/AppContext'
+import SearchModal from './SearchModal'
+import CartModal from './CartModal'
+import UserMenu from './UserMenu'
 
 const Header = () => {
+  const { state, dispatch } = useApp()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [cartCount, setCartCount] = useState(3)
+
+  const getTotalItems = () => {
+    return state.cart.reduce((total, item) => total + item.quantity, 0)
+  }
 
   const handleSearch = () => {
-    setIsSearchOpen(!isSearchOpen)
-    console.log('Search clicked')
+    dispatch({ type: 'TOGGLE_SEARCH' })
   }
 
   const handleUserAccount = () => {
-    console.log('User account clicked')
-    alert('User account functionality - would redirect to login/profile page')
+    dispatch({ type: 'TOGGLE_USER_MENU' })
   }
 
   const handleCart = () => {
-    console.log('Shopping cart clicked')
-    alert(`Shopping cart clicked - ${cartCount} items in cart`)
+    dispatch({ type: 'TOGGLE_CART' })
   }
+
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -38,55 +43,44 @@ const Header = () => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4 relative">
             <button 
               onClick={handleSearch}
-              className="text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+              className={`text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100 ${
+                state.isSearchOpen ? 'text-indigo-600 bg-indigo-50' : ''
+              }`}
               title="Search products"
             >
               <Search className="w-5 h-5" />
             </button>
             <button 
               onClick={handleUserAccount}
-              className="text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+              className={`text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100 ${
+                state.isUserMenuOpen ? 'text-indigo-600 bg-indigo-50' : ''
+              }`}
               title="My Account"
             >
               <User className="w-5 h-5" />
             </button>
             <button 
               onClick={handleCart}
-              className="text-gray-700 hover:text-indigo-600 transition-colors relative p-2 rounded-lg hover:bg-gray-100"
+              className={`text-gray-700 hover:text-indigo-600 transition-colors relative p-2 rounded-lg hover:bg-gray-100 ${
+                state.isCartOpen ? 'text-indigo-600 bg-indigo-50' : ''
+              }`}
               title="Shopping Cart"
             >
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {cartCount}
-              </span>
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {getTotalItems()}
+                </span>
+              )}
             </button>
+            
+            {/* User Menu */}
+            <UserMenu />
           </div>
 
-          {/* Search Bar (when opened) */}
-          {isSearchOpen && (
-            <div className="absolute top-full left-0 right-0 bg-white shadow-lg border-t z-50">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div className="flex items-center space-x-4">
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    autoFocus
-                  />
-                  <button className="btn-primary">Search</button>
-                  <button 
-                    onClick={() => setIsSearchOpen(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
@@ -109,30 +103,44 @@ const Header = () => {
               <div className="flex items-center space-x-4 px-3 py-2">
                 <button 
                   onClick={handleSearch}
-                  className="text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+                  className={`text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100 ${
+                    state.isSearchOpen ? 'text-indigo-600 bg-indigo-50' : ''
+                  }`}
                 >
                   <Search className="w-5 h-5" />
                 </button>
                 <button 
                   onClick={handleUserAccount}
-                  className="text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+                  className={`text-gray-700 hover:text-indigo-600 transition-colors p-2 rounded-lg hover:bg-gray-100 ${
+                    state.isUserMenuOpen ? 'text-indigo-600 bg-indigo-50' : ''
+                  }`}
                 >
                   <User className="w-5 h-5" />
                 </button>
                 <button 
                   onClick={handleCart}
-                  className="text-gray-700 hover:text-indigo-600 transition-colors relative p-2 rounded-lg hover:bg-gray-100"
+                  className={`text-gray-700 hover:text-indigo-600 transition-colors relative p-2 rounded-lg hover:bg-gray-100 ${
+                    state.isCartOpen ? 'text-indigo-600 bg-indigo-50' : ''
+                  }`}
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {getTotalItems()}
+                    </span>
+                  )}
                 </button>
               </div>
             </div>
           </div>
         )}
+        
+        {/* Search Modal */}
+        <SearchModal />
       </div>
+      
+      {/* Cart Modal */}
+      <CartModal />
     </header>
   )
 }

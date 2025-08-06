@@ -1,4 +1,5 @@
 import React from 'react'
+import { AppProvider } from './context/AppContext'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import FeaturedProducts from './components/FeaturedProducts'
@@ -7,13 +8,15 @@ import Footer from './components/Footer'
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <Hero />
-      <FeaturedProducts />
-      <About />
-      <Footer />
-    </div>
+    <AppProvider>
+      <div className="min-h-screen bg-white">
+        <Header />
+        <Hero />
+        <FeaturedProducts />
+        <About />
+        <Footer />
+      </div>
+    </AppProvider>
   )
 }
 
