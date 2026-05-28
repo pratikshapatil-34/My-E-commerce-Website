@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  LayoutDashboard, Package, Users, ShoppingCart, DollarSign, TrendingUp, Plus, Search, Filter, MoreHorizontal, Edit2, Trash2, Eye
-} from 'lucide-react';
+import { LayoutDashboard, Package, Users, ShoppingCart, DollarSign, TrendingUp, Plus, Search, Filter, MoreHorizontal, CreditCard as Edit2, Trash2, Eye } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Product, Order } from '@/types';
 import { formatPrice, formatDate, cn } from '@/utils/helpers';

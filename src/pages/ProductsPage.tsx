@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, SlidersHorizontal, Grid3X3, List, ChevronDown, X, Star } from 'lucide-react';
+import { Search, SlidersHorizontal, Grid3x3 as Grid3X3, List, ChevronDown, X, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Product, Category } from '@/types';
 import { formatPrice, calculateDiscount, cn } from '@/utils/helpers';
